@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="noticens">
+	<resultMap type="notice" id="noticeResult">
+		<result property="nt_no" 		column="nt_no" />
+		<result property="nt_sbjt"   		column="nt_sbjt" />
+		<result property="nt_cont"   	column="nt_cont" />
+		<result property="nt_reg_dt" 	column="nt_reg_dt" />
+		<result property="nt_rd_cnt"   column="nt_rd_cnt" />
+		<result property="nt_del"   column="nt_del" />
+		<result property="mng_id"   column="mng_id" />
+	</resultMap>
+	
+	<select id="list" parameterType="hashMap" resultMap="noticeResult">
+		select * from (select a.*, rowNum rn from (
+			select * from notice order by nt_reg_dt desc) a)
+			where rn between #{startRow} and #{endRow}
+	
+	</select>
+	<select id="total" resultType="integer">
+		select count(*) from notice
+	
+	</select>
+	
+	<select id="select" parameterType="string" resultType="notice">
+		select * from notice where nt_no=#{nt_no}
+	</select>
+	
+	<update id="rcupdate" parameterType="string">
+		update notice set nt_rd_cnt = nt_rd_cnt + 1 where nt_no=#{nt_no}
+	</update>
+	
+	<update id="update" parameterType="notice">
+		update notice set nt_sbjt=#{nt_sbjt}, nt_cont=#{nt_cont} where nt_no=#{nt_no}
+	</update>
+	
+	<update id="delete" parameterType="string">
+		update notice set nt_del='Y' where nt_no=#{nt_no}
+	</update>
+	
+	<insert id="insert" parameterType="notice">
+		insert into notice(NT_SBJT, NT_CONT, NT_RD_CNT, MNG_ID) values(#{nt_sbjt}, #{nt_cont}, 1, #{mng_id}) 
+	</insert>
+	
+</mapper>

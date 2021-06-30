@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="dbconnect.properties" />
+	<typeAliases>
+ 		<typeAlias alias="booking" type="dogwalk.model.Booking" />		
+		<typeAlias alias="dog" type="dogwalk.model.Dog" />
+ 		<typeAlias alias="license" type="dogwalk.model.License" />
+		<typeAlias alias="manager" type="dogwalk.model.Manager" />
+		<typeAlias alias="mboard" type="dogwalk.model.MBoard" />
+	 	<!-- <typeAlias alias="member" type="dogwalk.model.Member" /> -->
+		<typeAlias alias="notice" type="dogwalk.model.Notice" />
+	 	<typeAlias alias="owner" type="dogwalk.model.Owner" />
+		<typeAlias alias="walker" type="dogwalk.model.Walker" />
+	</typeAliases>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<mappers>
+		<mapper resource="mboard.xml" />
+		<mapper resource="notice.xml" />
+		<mapper resource="dog.xml" />
+		<mapper resource="walker.xml" />
+		<mapper resource="owner.xml" />
+		<mapper resource="manager.xml" />
+		<mapper resource="license.xml" />
+		<mapper resource="booking.xml" />
+	</mappers>
+</configuration>

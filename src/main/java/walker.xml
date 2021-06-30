@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="walkerns">
+	<resultMap type="walker" id="walkerResult">
+		<result property="wkr_reg_no" 		column="wkr_reg_no" />
+		<result property="wkr_id"   		column="wkr_id" />
+		<result property="wkr_pwd"   	column="wkr_pwd" />
+		<result property="wkr_name" 	column="wkr_name" />
+		<result property="wkr_addr"   column="wkr_addr" />
+		<result property="wkr_email"   column="wkr_email" />
+		<result property="wkr_tel"   column="wkr_tel" />
+		<result property="wkr_gdr" 		column="wkr_gdr" />
+		<result property="wkr_bth_dt"   		column="wkr_bth_dt" />
+		<result property="wkr_rs_cnt"   	column="wkr_rs_cnt" />
+		<result property="wkr_gd" 	column="wkr_gd" />
+		<result property="wkr_pht_nm"   column="wkr_pht_nm" />
+		<result property="wkr_rs_ex"   column="wkr_rs_ex" />
+		<result property="wkr_career"   column="wkr_career" />
+		<result property="wkr_del"   column="wkr_del" />
+		<result property="wkr_reg_dt"   column="wkr_reg_dt" />
+		<result property="mb_clf_cd"   column="mb_clf_cd" />
+	</resultMap>
+	
+	<select id="list" parameterType="hashMap" resultMap="walkerResult">
+		select * from (select a.*, rowNum rn from (
+			select * from walker order by wkr_reg_no desc) a)
+			where rn between #{startRow} and #{endRow}
+	</select> <!-- 리스트 뽑아올때 쓰는 거 -->
+	
+	<select id="total" resultType="int">
+		select count(*) from walker
+	</select> <!-- 페이징 할때 쓰는거 -->
+	
+	<select id="selectWalkerNo" parameterType="string" resultType="walker">
+		select * from walker where wkr_reg_no=#{wkr_reg_no}
+	</select> <!-- 프로필 조회 View에서 사용 -->
+	
+	<select id="selectWalkerId" parameterType="string" resultType="walker"> <!-- 도우미만 체크, LJH -->
+		select * from walker where wkr_id = #{wkr_id}
+	</select>
+	
+	<select id="searchlist" parameterType="hashMap" resultMap="walkerResult">
+		select * from (select a.*, rowNum rn from (
+			select * from walker where ${type} like '%'||#{search}||'%') a)
+			where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="selectAll" parameterType="string" resultType="walker"> <!-- 도우미와 견주 모두 체크, LJH -->
+		select * from (select wkr_id, wkr_pwd from walker union all select own_id, own_pwd from owner) where wkr_id = #{wkr_id}
+	</select>
+	
+	<select id="wkr_seq_increase" resultType="integer"> 	<!-- 시퀀스 추가 쿼리, LJH -->
+		select nvl(max(wkr_reg_no),0) + 1 from walker
+	</select>
+	
+	<insert id="insertWalker" parameterType="walker"> <!-- 도우미 테이블 입력 쿼리, LJH -->
+		insert into walker
+		(wkr_reg_no, wkr_id, wkr_pwd, wkr_name, wkr_addr,
+		wkr_email, wkr_tel, wkr_gdr, wkr_bth_dt, wkr_rs_cnt, wkr_gd,
+		wkr_pht_nm, wkr_rs_ex, wkr_career, mb_clf_cd )
+		values 
+		(#{wkr_reg_no}, #{wkr_id}, #{wkr_pwd}, #{wkr_name}, #{wkr_addr}, #{wkr_email},
+		#{wkr_tel}, #{wkr_gdr}, #{wkr_bth_dt}, #{wkr_rs_cnt}, #{wkr_gd}, #{wkr_pht_nm},
+		#{wkr_rs_ex,jdbcType=VARCHAR}, #{wkr_career,jdbcType=VARCHAR}, #{mb_clf_cd})
+	</insert>
+	
+	<update id="updateWalker" parameterType="walker"> <!-- 도우미 테이블 업데이트 쿼리, LJH -->
+		update walker set wkr_pwd=#{wkr_pwd}, wkr_name=#{wkr_name}, wkr_addr=#{wkr_addr}, 
+		wkr_tel=#{wkr_tel}, wkr_email=#{wkr_email}, wkr_rs_ex=#{wkr_rs_ex}, 
+		wkr_rs_cnt=#{wkr_rs_cnt}, wkr_career=#{wkr_career} where wkr_id=#{wkr_id }
+	</update>
+	
+	<update id="delete" parameterType="string"> <!-- 회원탈퇴 -->
+		update walker set wkr_del='Y' where wkr_id=#{wkr_id}
+	</update>
+</mapper>

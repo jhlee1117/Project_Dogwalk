@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bookingns">
+	<resultMap type="booking" id="bookingResult">
+		<result property="bk_no" column="bk_no" />
+		<result property="mbd_no" column="mbd_no" />
+		<result property="bk_mc_chk" column="bk_mc_chk" />
+		<result property="bk_chk" column="bk_chk" />
+		<result property="wkr_reg_no" column="wkr_reg_no" />
+		<result property="wkr_id" column="wkr_id" />
+		<result property="mbd_sbjt" column="mbd_sbjt" />
+	</resultMap>
+
+	<resultMap type="booking" id="bookingResult2">
+		<result property="bk_no" column="bk_no" />
+		<result property="mbd_no" column="mbd_no" />
+		<result property="bk_mc_chk" column="bk_mc_chk" />
+		<result property="bk_chk" column="bk_chk" />
+		<result property="wkr_reg_no" column="wkr_reg_no" />
+		<result property="wkr_id" column="wkr_id" />
+		<result property="mbd_reg_dt" column="mbd_reg_dt" />
+		<result property="own_id" column="own_id" />
+		<result property="mbd_sbjt" column="mbd_sbjt" />
+	</resultMap>
+
+	<select id="list" parameterType="hashMap"
+      resultMap="bookingResult">
+      <!-- a를 ()로 지정해주고 a의 모든 것을 골름. -->
+      select * from (select rowNum rn, e.* from (select b.bk_no, b.mbd_no,
+      m.mbd_sbjt, b.wkr_id, b.bk_mc_chk, b.bk_chk from booking b, mboard m
+      where b.mbd_no=m.mbd_no order by bk_no desc) e)
+      where rn between #{startRow} and ${endRow}
+   </select>
+
+	<insert id="insert" parameterType="booking">
+		insert into booking(mbd_no,
+		bk_chk, wkr_reg_no, wkr_id)
+		values(#{mbd_no},'Y', #{wkr_reg_no}, #{wkr_id})
+	</insert>
+
+	<select id="total" resultType="int">
+		select count(*) from booking
+	</select>
+
+	<update id="accept" parameterType="booking">
+		update booking set
+		bk_mc_chk='Y' where bk_no=#{bk_no}
+	</update>
+
+	<update id="deny" parameterType="booking">
+      update booking set
+      bk_mc_chk='N', bk_chk='N' where mbd_no=#{mbd_no} and bk_no!=#{bk_no}
+   </update>
+   
+   <update id="denyOne" parameterType="string">
+      update booking set bk_chk='N' where bk_no = #{bk_no}
+   </update>
+
+	<select id="wkrlist" parameterType="hashMap"
+      resultMap="bookingResult2">
+      select * from (select rowNum rn, e.* from (select b.bk_no, b.mbd_no,
+      m.mbd_sbjt, b.wkr_id, b.wkr_reg_no, b.bk_mc_chk, b.bk_chk, m.own_id,
+      m.mbd_reg_dt from
+      booking b, mboard m
+      where b.mbd_no=m.mbd_no and b.wkr_id=#{wkr_id} order by bk_no desc) e)
+      where rn between #{startRow} and ${endRow}
+   </select>
+   
+   <select id="bklist" parameterType="string"
+      resultMap="bookingResult">
+      select * from booking where mbd_no=#{mbd_no }
+   </select>
+   
+   <select id="selectbk" resultType="integer">
+		select count(*) from booking where mbd_no=#{mbd_no } and wkr_id=#{wkr_id }
+	</select> <!-- 오류나면 지워 -->
+
+	<select id="accheck" resultType="integer">
+		select count(*) from booking where mbd_no=#{mbd_no } and bk_mc_chk='Y' and bk_chk='Y'
+	</select> <!-- 오류나면 지워 -->
+	
+	<select id="bkcount" resultType="integer">
+		select count(*) from booking where mbd_no=#{mbd_no }
+	</select> <!-- 오류나면 지워 -->
+	
+	<update id="acceptOne" parameterType="booking">
+		update booking set
+		bk_mc_chk='Y', bk_chk='Y' where bk_no=#{bk_no}
+	</update>
+</mapper>

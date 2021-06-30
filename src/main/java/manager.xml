@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="managerns">
+	<resultMap type="manager" id="managerResult">
+		<result property="mng_id" 		column="mng_id" />
+		<result property="mng_pwd"   		column="mng_pwd" />
+	</resultMap>
+	
+	<select id="select" parameterType="string" resultType="manager">
+		select * from manager where mng_id=#{mng_id}
+	</select>
+	
+</mapper>

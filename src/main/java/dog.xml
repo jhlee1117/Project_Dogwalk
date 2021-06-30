@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dogns">
+	<resultMap type="dog" id="dogResult">
+		<result property="dog_no" 		column="dog_no" />
+		<result property="dog_name"   		column="dog_name" />
+		<result property="dog_gdr"   	column="dog_gdr" />
+		<result property="dog_kind" 	column="dog_kind" />
+		<result property="dog_size"   column="dog_size" />
+		<result property="dog_age"   column="dog_age" />
+		<result property="dog_len"   column="dog_len" />
+		<result property="dog_wgt" 		column="dog_wgt" />
+		<result property="dog_ntl_chk"   		column="dog_ntl_chk" />
+		<result property="dog_agg"   	column="dog_agg" />
+		<result property="dog_chr" 	column="dog_chr" />
+		<result property="dog_md_hst"   column="dog_md_hst" />
+		<result property="dog_pht_nm"   column="dog_pht_nm" />
+		<result property="own_reg_no"   column="own_reg_no" />
+		<result property="own_id"   column="own_id" />
+	</resultMap>
+	
+	<select id="list" parameterType="hashMap" resultMap="dogResult">
+		select * from (select a.*, rowNum rn from (
+			select * from dog order by dog_no desc) a)
+			where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="total" resultType="int">
+		select count(*) from dog
+	</select>
+	
+	<select id="selectView" parameterType="string" resultType="dog">
+		select * from dog where dog_no=#{dog_no}
+	</select>
+	
+	<select id="searchlist" parameterType="hashMap" resultMap="dogResult">
+		select * from (select a.*, rowNum rn from (
+			select * from dog where ${type} like '%'||#{search}||'%') a)
+			where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="selectDogInfo" parameterType="string" resultType="dog">
+		select * from dog where own_id = #{own_id}
+	</select>
+	
+	<insert id="insertDog" parameterType="dog">
+		insert into dog (dog_name, dog_gdr, dog_kind, dog_size, dog_age, dog_len, dog_wgt,
+						dog_ntl_chk, dog_agg, dog_chr, dog_md_hst, dog_pht_nm, own_id)
+		values (#{dog_name}, #{dog_gdr}, #{dog_kind}, #{dog_size}, #{dog_age},
+				#{dog_len},	#{dog_wgt}, #{dog_ntl_chk}, #{dog_agg}, #{dog_chr}, #{dog_md_hst},
+				#{dog_pht_nm}, #{own_id} )
+	</insert>
+
+	<update id="updateDog" parameterType="dog">
+		update dog set dog_age=#{dog_age}, dog_len =#{dog_len}, dog_wgt=#{dog_wgt}, 
+		dog_ntl_chk=#{dog_ntl_chk}, dog_agg=#{dog_agg}, dog_chr=#{dog_chr, jdbcType=VARCHAR}, dog_md_hst=#{dog_md_hst, jdbcType=VARCHAR}
+		where dog_no=#{dog_no}
+	</update>
+	
+	<select id="selectmbdog" parameterType="string" resultType="dog">
+		select * from dog where own_id=#{own_id }
+	</select>
+
+</mapper>

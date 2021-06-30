@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mboardns">
+	<resultMap type="mboard" 		id="mboardResult">
+		<result property="mbd_no" 		column="mbd_no" />
+		<result property="mbd_str_dt" 		column="mbd_str_dt" />
+		<result property="mbd_fn_dt" 		column="mbd_fn_dt" />
+		<result property="mbd_sbjt" 	column="mbd_sbjt" />
+		<result property="mbd_cont" 	column="mbd_cont" />
+		<result property="mbd_reg_dt" 	column="mbd_reg_dt" />
+		<result property="mbd_rd_cnt" 	column="mbd_rd_cnt" />
+		<result property="mbd_del" 		column="mbd_del" />
+		<result property="own_reg_no"    column="own_reg_no" />
+		<result property="own_id" 		column="own_id" />
+		<result property="dog_no" 		column="dog_no" />
+	</resultMap>
+	<select id="list" parameterType="hashMap" resultMap="mboardResult">
+	<!-- a를 ()로 지정해주고 a의 모든 것을 골름.  -->
+		select * from (select rowNum rn, e.* from (select * from mboard order by mbd_no desc) e) where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="total" resultType="int"> 
+		select count(*) from mboard
+	</select>
+	
+	<update id="readcountUpdate" parameterType="String">
+		update mboard set mbd_rd_cnt = mbd_rd_cnt + 1 where mbd_no=#{mbd_no}
+	</update>
+	
+	<!-- <select id="select" parameterType="string" resultType="mboard">
+		select * from mboard m, dog g where m.OWN_REG_NO=g.OWN_REG_NO and mbd_no = #{mbd_no}
+	</select> -->
+	<select id="select" parameterType="string" resultType="mboard">
+      select * from mboard where mbd_no = #{mbd_no}
+   </select>
+	
+	<insert id="insert" parameterType="mboard">
+		insert into mboard(MBD_STR_DT,MBD_FN_DT,MBD_SBJT,MBD_CONT,MBD_RD_CNT,OWN_REG_NO,OWN_ID) 
+		values(#{mbd_str_dt},#{mbd_fn_dt},#{mbd_sbjt},#{mbd_cont},1, #{own_reg_no}, #{own_id})
+	</insert>
+	
+	<update id="update" parameterType="mboard">
+		update mboard set mbd_sbjt=#{mbd_sbjt}, mbd_str_dt=#{mbd_str_dt}, mbd_fn_dt=#{mbd_fn_dt}, mbd_cont=#{mbd_cont} where mbd_no=#{mbd_no}
+	</update>
+	
+	<update id="delete" parameterType="string">
+		update mboard set mbd_del='Y' where mbd_no=#{mbd_no}
+	</update>
+	
+	<update id="rcupdate" parameterType="string">
+		update mboard set mbd_rd_cnt = mbd_rd_cnt + 1 where mbd_no=#{mbd_no }
+	</update>
+	
+	<select id="ownlist" parameterType="hashMap" resultMap="mboardResult">
+	<!-- a를 ()로 지정해주고 a의 모든 것을 골름.  -->
+		select * from (select rowNum rn, e.* from (select * from mboard where own_id=#{own_id} and own_reg_no=#{own_reg_no} order by mbd_no desc) e) where rn between #{startRow} and #{endRow}
+	</select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="licenseInfo">
+	<resultMap type="license" id="lcInfoResult">
+		<result property="lc_cd" column="lc_cd" />
+		<result property="lc_name" column="lc_name" />
+		<result property="lc_iss_ogz" column="lc_iss_ogz" />
+		<result property="wkr_reg_no" column="wkr_reg_no" />
+		<result property="wkr_id" column="wkr_id" />
+	</resultMap>
+
+	<insert id="insertLicense" parameterType="License">
+		insert into
+		license(lc_cd, lc_name, lc_iss_ogz, wkr_id, wkr_reg_no)
+		values
+		(#{lc_cd}, #{lc_name}, #{lc_iss_ogz}, #{wkr_id}, #{wkr_reg_no})
+	</insert>
+	<insert id="updateLicense" parameterType="License">
+		insert into
+		license(lc_cd, lc_name, lc_iss_ogz, wkr_id, wkr_reg_no)
+		values
+		(#{lc_cd}, #{lc_name}, #{lc_iss_ogz}, #{wkr_id}, #{wkr_reg_no})
+	</insert>
+	<select id="selectLicense" parameterType="hashmap"
+		resultMap="lcInfoResult">
+		select * from license where wkr_id = #{wkr_id}
+	</select>
+	<select id="selectLccd" parameterType="string" resultType="License">
+		select lc_cd from license where lc_cd = #{lc_cd}
+	</select>
+</mapper>

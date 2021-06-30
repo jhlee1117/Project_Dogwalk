@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ownerns">
+	<resultMap type="owner" id="ownerResult">
+		<result property="own_reg_no" 		column="own_reg_no" />
+		<result property="own_id"   		column="own_id" />
+		<result property="own_pwd"   	column="own_pwd" />
+		<result property="own_name" 	column="own_name" />
+		<result property="own_addr"   column="own_addr" />
+		<result property="own_email"   column="own_email" />
+		<result property="own_tel"   column="own_tel" />
+		<result property="own_bth_dt" 		column="own_bth_dt" />
+		<result property="own_gdr"   		column="own_gdr" />
+		<result property="own_reg_dt"   	column="own_reg_dt" />
+		<result property="own_del" 	column="own_del" />
+		<result property="mb_clf_cd"   column="mb_clf_cd" />
+	</resultMap>
+	
+	<select id="selectOwnerId" parameterType="string" resultType="owner">
+		select * from owner where own_id = #{own_id}
+	</select> <!-- View에서 사용 -->
+	
+	<select id="list" parameterType="hashMap" resultMap="ownerResult">
+		select * from (select a.*, rowNum rn from (
+			select * from owner order by own_reg_no desc) a)
+			where rn between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="total" resultType="int">
+		select count(*) from owner
+	</select>
+	
+	<select id="selectAll" parameterType="string" resultType="owner"> <!-- 도우미와 견주 모두 체크, LJH -->
+		select * from (select own_id, own_pwd from owner union all select wkr_id, wkr_pwd from walker) where own_id = #{own_id}
+	</select>
+	
+	<insert id="insertOwner" parameterType="owner">
+		insert into owner
+		(own_id, own_pwd, own_name, own_addr, own_email, own_tel, own_bth_dt,
+		own_gdr, mb_clf_cd)
+		values (#{own_id}, #{own_pwd}, #{own_name}, #{own_addr}, #{own_email},
+		#{own_tel}, #{own_bth_dt}, #{own_gdr}, #{mb_clf_cd})
+	</insert>
+	
+	<update id="updateOwner" parameterType="owner">
+		update owner set own_pwd=#{own_pwd}, own_name=#{own_name}, own_addr=#{own_addr}, 
+		own_tel=#{own_tel}, own_email=#{own_email} where own_id=#{own_id }
+	</update>
+
+	<update id="delete" parameterType="string"> <!-- 회원탈퇴 -->
+		update owner set own_del='Y' where own_id=#{own_id}
+	</update>
+
+</mapper>
